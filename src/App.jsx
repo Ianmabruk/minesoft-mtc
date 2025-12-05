@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import Services from './pages/Services'
 import Checkout from './pages/Checkout'
 import Quote from './pages/Quote'
+import BusinessForm from './pages/BusinessForm'
 import Careers from './pages/Careers'
 import ClientDashboard from './pages/ClientDashboard'
 import AdminDashboard from './pages/AdminDashboard'
@@ -43,6 +44,11 @@ function App() {
         <Route path="/quote" element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Quote />
+          </ProtectedRoute>
+        } />
+        <Route path="/business-form" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <BusinessForm />
           </ProtectedRoute>
         } />
         <Route path="/careers" element={<Careers />} />

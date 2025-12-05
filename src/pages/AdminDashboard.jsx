@@ -22,8 +22,10 @@ const AdminDashboard = () => {
   const [projects, setProjects] = useState([])
   const [selectedProject, setSelectedProject] = useState(null)
   const [showProjectModal, setShowProjectModal] = useState(false)
+  const [showAdminSignup, setShowAdminSignup] = useState(false)
   const { register, handleSubmit, reset, formState: { errors } } = useForm()
   const { register: emailRegister, handleSubmit: emailHandleSubmit, reset: emailReset } = useForm()
+  const { register: signupRegister, handleSubmit: signupHandleSubmit, reset: signupReset } = useForm()
 
   useEffect(() => {
     const authStatus = localStorage.getItem('admin_authenticated')
@@ -34,14 +36,26 @@ const AdminDashboard = () => {
   }, [])
 
   const onLogin = async (data) => {
-    // Client-side admin authentication
-    if (data.email === 'admin@mtcltd.com' && data.password === 'admin123') {
+    // Check if it's the main admin
+    if (data.email === 'ianmabruk3@gmail.com') {
+      localStorage.setItem('admin_authenticated', 'true')
+      setIsAuthenticated(true)
+      fetchDashboardData()
+      toast.success('Welcome to Admin Dashboard')
+      return
+    }
+    
+    // Check authorized admins
+    const authorizedAdmins = JSON.parse(localStorage.getItem('authorized_admins') || '[]')
+    const admin = authorizedAdmins.find(a => a.email === data.email && a.code === data.password)
+    
+    if (admin) {
       localStorage.setItem('admin_authenticated', 'true')
       setIsAuthenticated(true)
       fetchDashboardData()
       toast.success('Welcome to Admin Dashboard')
     } else {
-      toast.error('Invalid credentials')
+      toast.error('Invalid credentials or unauthorized access')
     }
   }
 
@@ -122,6 +136,50 @@ const AdminDashboard = () => {
     setShowEmailModal(false)
     emailReset()
   }
+  
+  const onAdminSignup = async (data) => {
+    const adminRequests = JSON.parse(localStorage.getItem('admin_requests') || '[]')
+    const newRequest = {
+      id: Date.now().toString(),
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      reason: data.reason,
+      status: 'pending',
+      created_at: new Date().toISOString()
+    }
+    adminRequests.push(newRequest)
+    localStorage.setItem('admin_requests', JSON.stringify(adminRequests))
+    
+    toast.success('Admin access request submitted! You will receive an email with access code if approved.')
+    setShowAdminSignup(false)
+    signupReset()
+  }
+  
+  const authorizeAdmin = (request) => {
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase()
+    const authorizedAdmins = JSON.parse(localStorage.getItem('authorized_admins') || '[]')
+    
+    authorizedAdmins.push({
+      id: request.id,
+      email: request.email,
+      firstName: request.firstName,
+      lastName: request.lastName,
+      code: code,
+      authorized_at: new Date().toISOString()
+    })
+    
+    localStorage.setItem('authorized_admins', JSON.stringify(authorizedAdmins))
+    
+    // Update request status
+    const adminRequests = JSON.parse(localStorage.getItem('admin_requests') || '[]')
+    const updatedRequests = adminRequests.map(r => 
+      r.id === request.id ? { ...r, status: 'approved', code } : r
+    )
+    localStorage.setItem('admin_requests', JSON.stringify(updatedRequests))
+    
+    toast.success(`Admin authorized! Access code: ${code}`)
+  }
 
   const logout = () => {
     localStorage.removeItem('admin_authenticated')
@@ -169,6 +227,15 @@ const AdminDashboard = () => {
             </button>
           </form>
           
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setShowAdminSignup(true)}
+              className="text-gold hover:text-yellow-400 text-sm"
+            >
+              Request Admin Access
+            </button>
+          </div>
+          
 
         </motion.div>
       </div>
@@ -211,6 +278,7 @@ const AdminDashboard = () => {
             { id: 'users', name: 'Users', icon: Users },
             { id: 'quotes', name: 'Quote Requests', icon: FileText },
             { id: 'projects', name: 'Projects', icon: Briefcase },
+            { id: 'admin-requests', name: 'Admin Requests', icon: Users },
             { id: 'analytics', name: 'Analytics', icon: TrendingUp }
           ].map((tab) => (
             <button
@@ -466,6 +534,42 @@ const AdminDashboard = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Admin Requests Tab */}
+        {activeTab === 'admin-requests' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white">Admin Access Requests</h2>
+            <div className="grid grid-cols-1 gap-4">
+              {JSON.parse(localStorage.getItem('admin_requests') || '[]').map((request) => (
+                <div key={request.id} className="card-luxury">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-white font-semibold">{request.firstName} {request.lastName}</h3>
+                      <p className="text-softgray">{request.email}</p>
+                      <p className="text-softgray text-sm mt-2">{request.reason}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      {request.status === 'pending' && (
+                        <button
+                          onClick={() => authorizeAdmin(request)}
+                          className="btn-primary text-sm px-4 py-2"
+                        >
+                          Authorize
+                        </button>
+                      )}
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        request.status === 'approved' ? 'bg-green-500/20 text-green-400' :
+                        'bg-yellow-500/20 text-yellow-400'
+                      }`}>
+                        {request.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -800,6 +904,60 @@ const AdminDashboard = () => {
               >
                 <Send className="w-5 h-5 mr-2" />
                 Send Quote Email
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      )}
+      
+      {/* Admin Signup Modal */}
+      {showAdminSignup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-midnight border border-gold/20 rounded-xl p-6 max-w-md w-full"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Request Admin Access</h2>
+              <button
+                onClick={() => setShowAdminSignup(false)}
+                className="text-softgray hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={signupHandleSubmit(onAdminSignup)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  {...signupRegister('firstName', { required: 'First name required' })}
+                  placeholder="First Name"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+                />
+                <input
+                  {...signupRegister('lastName', { required: 'Last name required' })}
+                  placeholder="Last Name"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+                />
+              </div>
+              
+              <input
+                {...signupRegister('email', { required: 'Email required' })}
+                type="email"
+                placeholder="Email Address"
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+              />
+              
+              <textarea
+                {...signupRegister('reason', { required: 'Reason required' })}
+                placeholder="Why do you need admin access?"
+                rows={3}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold resize-none"
+              />
+              
+              <button type="submit" className="w-full btn-primary">
+                Submit Request
               </button>
             </form>
           </motion.div>

@@ -234,7 +234,7 @@ const Services = () => {
                       </div>
                     </div>
 
-                    <Link to="/contact" className="btn-primary inline-flex items-center">
+                    <Link to="/business-form" className="btn-primary inline-flex items-center">
                       Get Quote <ArrowRight className="ml-2 w-5 h-5" />
                     </Link>
                   </div>
@@ -278,7 +278,7 @@ const Services = () => {
               Transform your business with enterprise-grade solutions. Contact our experts for a free consultation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="btn-primary inline-flex items-center">
+              <Link to="/business-form" className="btn-primary inline-flex items-center">
                 Request Consultation <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
               <Link to="/about" className="btn-secondary">
