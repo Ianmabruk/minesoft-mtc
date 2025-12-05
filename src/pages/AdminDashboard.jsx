@@ -23,10 +23,14 @@ const AdminDashboard = () => {
   const [projects, setProjects] = useState([])
   const [selectedProject, setSelectedProject] = useState(null)
   const [showProjectModal, setShowProjectModal] = useState(false)
+  const [jobs, setJobs] = useState([])
+  const [showJobModal, setShowJobModal] = useState(false)
+  const [editingJob, setEditingJob] = useState(null)
   const [showAdminSignup, setShowAdminSignup] = useState(false)
   const { register, handleSubmit, reset, formState: { errors } } = useForm()
   const { register: emailRegister, handleSubmit: emailHandleSubmit, reset: emailReset } = useForm()
   const { register: signupRegister, handleSubmit: signupHandleSubmit, reset: signupReset } = useForm()
+  const { register: jobRegister, handleSubmit: jobHandleSubmit, reset: jobReset } = useForm()
 
   useEffect(() => {
     const authStatus = localStorage.getItem('admin_authenticated')
@@ -201,6 +205,48 @@ const AdminDashboard = () => {
     
     toast.success(`Admin authorized! Access code: ${code}`)
   }
+  
+  const fetchJobs = async () => {
+    const jobs = JSON.parse(localStorage.getItem('mtc_jobs') || '[]')
+    setJobs(jobs)
+  }
+  
+  const onJobSubmit = async (data) => {
+    const jobs = JSON.parse(localStorage.getItem('mtc_jobs') || '[]')
+    const requirements = data.requirements.split('\n').filter(req => req.trim())
+    
+    if (editingJob) {
+      const updatedJobs = jobs.map(job => 
+        job.id === editingJob.id ? { ...editingJob, ...data, requirements, updated_at: new Date().toISOString() } : job
+      )
+      localStorage.setItem('mtc_jobs', JSON.stringify(updatedJobs))
+      setJobs(updatedJobs)
+      toast.success('Job updated successfully!')
+    } else {
+      const newJob = {
+        id: Date.now().toString(),
+        ...data,
+        requirements,
+        created_at: new Date().toISOString()
+      }
+      jobs.push(newJob)
+      localStorage.setItem('mtc_jobs', JSON.stringify(jobs))
+      setJobs(jobs)
+      toast.success('Job added successfully!')
+    }
+    
+    setShowJobModal(false)
+    setEditingJob(null)
+    jobReset()
+  }
+  
+  const deleteJob = (jobId) => {
+    const jobs = JSON.parse(localStorage.getItem('mtc_jobs') || '[]')
+    const updatedJobs = jobs.filter(job => job.id !== jobId)
+    localStorage.setItem('mtc_jobs', JSON.stringify(updatedJobs))
+    setJobs(updatedJobs)
+    toast.success('Job deleted successfully!')
+  }
 
   const logout = () => {
     localStorage.removeItem('admin_authenticated')
@@ -299,6 +345,7 @@ const AdminDashboard = () => {
             { id: 'users', name: 'Users', icon: Users },
             { id: 'quotes', name: 'Quote Requests', icon: FileText },
             { id: 'projects', name: 'Projects', icon: Briefcase },
+            { id: 'jobs', name: 'Jobs', icon: Briefcase },
             { id: 'admin-requests', name: 'Admin Requests', icon: Users },
             { id: 'analytics', name: 'Analytics', icon: TrendingUp }
           ].map((tab) => (
@@ -309,6 +356,7 @@ const AdminDashboard = () => {
                 if (tab.id === 'users') fetchUsers()
                 if (tab.id === 'quotes') fetchQuotes()
                 if (tab.id === 'projects') fetchProjects()
+                if (tab.id === 'jobs') fetchJobs()
               }}
               className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
                 activeTab === tab.id 
@@ -555,6 +603,63 @@ const AdminDashboard = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Jobs Tab */}
+        {activeTab === 'jobs' && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-white">Job Listings</h2>
+              <button
+                onClick={() => {
+                  setEditingJob(null)
+                  setShowJobModal(true)
+                  jobReset()
+                }}
+                className="btn-primary flex items-center"
+              >
+                Add New Job
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {jobs.map((job) => (
+                <div key={job.id} className="card-luxury">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">{job.title}</h3>
+                      <p className="text-gold">{job.department}</p>
+                      <p className="text-softgray text-sm">{job.location}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setEditingJob(job)
+                          setShowJobModal(true)
+                        }}
+                        className="text-gold hover:text-yellow-400 text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteJob(job.id)}
+                        className="text-red-400 hover:text-red-300 text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <p className="text-softgray text-sm mb-3">{job.description}</p>
+                  
+                  <div className="flex justify-between text-sm">
+                    <span className="text-softgray">{job.type}</span>
+                    <span className="text-gold">{job.salary}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -979,6 +1084,94 @@ const AdminDashboard = () => {
               
               <button type="submit" className="w-full btn-primary">
                 Submit Request
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      )}
+      
+      {/* Job Modal */}
+      {showJobModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-midnight border border-gold/20 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">{editingJob ? 'Edit Job' : 'Add New Job'}</h2>
+              <button
+                onClick={() => {
+                  setShowJobModal(false)
+                  setEditingJob(null)
+                }}
+                className="text-softgray hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={jobHandleSubmit(onJobSubmit)} className="space-y-4">
+              <input
+                {...jobRegister('title', { required: 'Job title required' })}
+                placeholder="Job Title"
+                defaultValue={editingJob?.title || ''}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+              />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  {...jobRegister('department', { required: 'Department required' })}
+                  placeholder="Department"
+                  defaultValue={editingJob?.department || ''}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+                />
+                <input
+                  {...jobRegister('location', { required: 'Location required' })}
+                  placeholder="Location"
+                  defaultValue={editingJob?.location || ''}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <select
+                  {...jobRegister('type', { required: 'Job type required' })}
+                  defaultValue={editingJob?.type || ''}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold"
+                >
+                  <option value="">Select Type</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Remote">Remote</option>
+                </select>
+                <input
+                  {...jobRegister('salary', { required: 'Salary required' })}
+                  placeholder="Salary Range"
+                  defaultValue={editingJob?.salary || ''}
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold"
+                />
+              </div>
+              
+              <textarea
+                {...jobRegister('description', { required: 'Description required' })}
+                placeholder="Job Description"
+                defaultValue={editingJob?.description || ''}
+                rows={3}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold resize-none"
+              />
+              
+              <textarea
+                {...jobRegister('requirements', { required: 'Requirements required' })}
+                placeholder="Requirements (one per line)"
+                defaultValue={editingJob?.requirements?.join('\n') || ''}
+                rows={4}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-softgray focus:outline-none focus:border-gold resize-none"
+              />
+              
+              <button type="submit" className="w-full btn-primary">
+                {editingJob ? 'Update Job' : 'Add Job'}
               </button>
             </form>
           </motion.div>

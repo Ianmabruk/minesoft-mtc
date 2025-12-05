@@ -22,7 +22,7 @@ const Careers = () => {
   const fetchJobs = async () => {
     // Load from localStorage or use demo data
     const storedJobs = localStorage.getItem('mtc_jobs')
-    if (storedJobs) {
+    if (storedJobs && JSON.parse(storedJobs).length > 0) {
       setJobs(JSON.parse(storedJobs))
     } else {
       // Demo data if API fails
