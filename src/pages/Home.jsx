@@ -32,28 +32,28 @@ const Home = () => {
       icon: Code,
       title: 'Software Development',
       description: 'Custom enterprise applications, web platforms, and mobile solutions',
-      price: 'From $50,000',
+      price: 'From KSH 6.5M',
       features: ['Full-Stack Development', 'Cloud Architecture', 'API Integration']
     },
     {
       icon: Shield,
       title: 'Cybersecurity Solutions',
       description: 'Government-grade security and compliance frameworks',
-      price: 'From $25,000',
+      price: 'From KSH 3.25M',
       features: ['Security Audits', 'Penetration Testing', 'Compliance Management']
     },
     {
       icon: BarChart3,
       title: 'Data Analytics & AI',
       description: 'Machine learning models and business intelligence solutions',
-      price: 'From $40,000',
+      price: 'From KSH 5.2M',
       features: ['Predictive Analytics', 'ML Implementation', 'BI Dashboards']
     },
     {
       icon: Megaphone,
       title: 'Digital Marketing',
       description: 'Strategic B2B marketing campaigns and brand development',
-      price: 'From $15,000/mo',
+      price: 'From KSH 1.95M/mo',
       features: ['SEO & SEM', 'Content Strategy', 'Performance Analytics']
     }
   ]

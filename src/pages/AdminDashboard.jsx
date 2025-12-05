@@ -351,7 +351,7 @@ const AdminDashboard = () => {
                       <p className="text-softgray text-sm">{quote.company}</p>
                     </div>
                     {quote.estimatedCost && (
-                      <span className="text-gold font-bold">${quote.estimatedCost.toLocaleString()}</span>
+                      <span className="text-gold font-bold">KSH {quote.estimatedCost.toLocaleString()}</span>
                     )}
                   </div>
 
@@ -446,7 +446,7 @@ const AdminDashboard = () => {
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-softgray">Budget:</span>
-                      <span className="text-gold font-bold">${project.budget.toLocaleString()}</span>
+                      <span className="text-gold font-bold">KSH {project.budget.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-softgray">Team:</span>
@@ -620,7 +620,7 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-softgray">Total Revenue</p>
-                  <p className="text-3xl font-bold text-white">$2.4M</p>
+                  <p className="text-3xl font-bold text-white">KSH 312M</p>
                 </div>
                 <DollarSign className="w-12 h-12 text-gold" />
               </div>
@@ -675,7 +675,7 @@ const AdminDashboard = () => {
                     <p className="text-softgray"><span className="text-white">Timeline:</span> {selectedQuote.timeline || 'Not specified'}</p>
                     <p className="text-softgray"><span className="text-white">Budget:</span> {selectedQuote.budget || 'Not specified'}</p>
                     {selectedQuote.estimatedCost && (
-                      <p className="text-softgray"><span className="text-white">Estimated Cost:</span> <span className="text-gold font-bold">${selectedQuote.estimatedCost.toLocaleString()}</span></p>
+                      <p className="text-softgray"><span className="text-white">Estimated Cost:</span> <span className="text-gold font-bold">KSH {selectedQuote.estimatedCost.toLocaleString()}</span></p>
                     )}
                   </div>
                 </div>
@@ -770,7 +770,7 @@ const AdminDashboard = () => {
                         {selectedProject.status}
                       </span>
                     </p>
-                    <p className="text-softgray"><span className="text-white">Budget:</span> <span className="text-gold font-bold">${selectedProject.budget.toLocaleString()}</span></p>
+                    <p className="text-softgray"><span className="text-white">Budget:</span> <span className="text-gold font-bold">KSH {selectedProject.budget.toLocaleString()}</span></p>
                   </div>
                 </div>
 

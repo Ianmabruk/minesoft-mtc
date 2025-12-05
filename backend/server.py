@@ -120,7 +120,7 @@ def generate_quote_email_html(client_name, quote_amount, project_details, paymen
                 
                 <div class="quote-box">
                     <h2 style="margin: 0 0 10px 0; color: white;">Your Project Quote</h2>
-                    <div class="quote-amount">${quote_amount:,}</div>
+                    <div class="quote-amount">KSH {quote_amount:,}</div>
                     <p style="margin: 10px 0 0 0; color: #DADEE4;">Total Investment</p>
                 </div>
                 

@@ -12,10 +12,10 @@ const Quote = () => {
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm()
 
   const services = [
-    { id: 'software', name: 'Software Development', basePrice: 50000 },
-    { id: 'cybersecurity', name: 'Cybersecurity Solutions', basePrice: 25000 },
-    { id: 'data-analytics', name: 'Data Analytics & AI', basePrice: 40000 },
-    { id: 'digital-marketing', name: 'Digital Marketing', basePrice: 15000 }
+    { id: 'software', name: 'Software Development', basePrice: 6500000 },
+    { id: 'cybersecurity', name: 'Cybersecurity Solutions', basePrice: 3250000 },
+    { id: 'data-analytics', name: 'Data Analytics & AI', basePrice: 5200000 },
+    { id: 'digital-marketing', name: 'Digital Marketing', basePrice: 1950000 }
   ]
 
   const projectSizes = [
@@ -233,10 +233,10 @@ const Quote = () => {
                         className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold"
                       >
                         <option value="">Select Budget Range</option>
-                        <option value="25k-50k">$25,000 - $50,000</option>
-                        <option value="50k-100k">$50,000 - $100,000</option>
-                        <option value="100k-250k">$100,000 - $250,000</option>
-                        <option value="250k+">$250,000+</option>
+                        <option value="3M-6.5M">KSH 3,000,000 - 6,500,000</option>
+                        <option value="6.5M-13M">KSH 6,500,000 - 13,000,000</option>
+                        <option value="13M-32.5M">KSH 13,000,000 - 32,500,000</option>
+                        <option value="32.5M+">KSH 32,500,000+</option>
                       </select>
                     </div>
                   </div>
@@ -279,7 +279,7 @@ const Quote = () => {
                 {estimatedCost ? (
                   <div className="text-center">
                     <div className="text-3xl font-bold text-gold mb-2">
-                      ${estimatedCost.toLocaleString()}
+                      KSH {estimatedCost.toLocaleString()}
                     </div>
                     <p className="text-softgray text-sm">
                       Estimated project cost

@@ -27,8 +27,8 @@ const Services = () => {
         'Ongoing Maintenance & Support'
       ],
       pricing: {
-        starter: '$50,000 - $150,000',
-        enterprise: '$150,000 - $500,000',
+        starter: 'KSH 6,500,000 - 19,500,000',
+        enterprise: 'KSH 19,500,000 - 65,000,000',
         custom: 'Custom Quote'
       }
     },
@@ -55,8 +55,8 @@ const Services = () => {
         'Continuous Monitoring & Updates'
       ],
       pricing: {
-        starter: '$25,000 - $75,000',
-        enterprise: '$75,000 - $250,000',
+        starter: 'KSH 3,250,000 - 9,750,000',
+        enterprise: 'KSH 9,750,000 - 32,500,000',
         custom: 'Government Contracts Available'
       }
     },
@@ -83,9 +83,9 @@ const Services = () => {
         'Performance Monitoring & Optimization'
       ],
       pricing: {
-        starter: '$40,000 - $100,000',
-        enterprise: '$100,000 - $300,000',
-        custom: 'AI Solutions from $500K+'
+        starter: 'KSH 5,200,000 - 13,000,000',
+        enterprise: 'KSH 13,000,000 - 39,000,000',
+        custom: 'AI Solutions from KSH 65M+'
       }
     },
     {
@@ -111,8 +111,8 @@ const Services = () => {
         'Optimization & Scaling'
       ],
       pricing: {
-        starter: '$15,000 - $50,000/month',
-        enterprise: '$50,000 - $150,000/month',
+        starter: 'KSH 1,950,000 - 6,500,000/month',
+        enterprise: 'KSH 6,500,000 - 19,500,000/month',
         custom: 'Enterprise Packages Available'
       }
     }

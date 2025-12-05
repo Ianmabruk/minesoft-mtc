@@ -240,12 +240,12 @@ const BusinessForm = () => {
                         className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold"
                       >
                         <option value="">Select Budget Range</option>
-                        <option value="Under $25k">Under $25,000</option>
-                        <option value="$25k-$50k">$25,000 - $50,000</option>
-                        <option value="$50k-$100k">$50,000 - $100,000</option>
-                        <option value="$100k-$250k">$100,000 - $250,000</option>
-                        <option value="$250k-$500k">$250,000 - $500,000</option>
-                        <option value="$500k+">$500,000+</option>
+                        <option value="Under KSH 3.25M">Under KSH 3,250,000</option>
+                        <option value="KSH 3.25M-6.5M">KSH 3,250,000 - 6,500,000</option>
+                        <option value="KSH 6.5M-13M">KSH 6,500,000 - 13,000,000</option>
+                        <option value="KSH 13M-32.5M">KSH 13,000,000 - 32,500,000</option>
+                        <option value="KSH 32.5M-65M">KSH 32,500,000 - 65,000,000</option>
+                        <option value="KSH 65M+">KSH 65,000,000+</option>
                       </select>
                     </div>
                   </div>
