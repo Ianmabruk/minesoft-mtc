@@ -21,7 +21,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', 'ianmabruk3@gmail.com')
-EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'your-app-password')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'gohj chdt tvwk kskz')
 
 # Ensure directories exist
 os.makedirs('db', exist_ok=True)
@@ -53,6 +53,12 @@ def write_json_file(filename, data):
 def send_email(to_email, subject, html_content):
     """Send HTML email"""
     try:
+        # Skip if no password configured
+        if EMAIL_PASSWORD == 'your-app-password':
+            print(f"Email would be sent to: {to_email}")
+            print(f"Subject: {subject}")
+            return True
+            
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
         msg['From'] = EMAIL_ADDRESS
@@ -599,6 +605,22 @@ def get_public_projects():
                 'completionDays': project.get('daysRemaining', 90)
             })
         return jsonify(public_projects), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/test-email', methods=['POST'])
+def test_email():
+    """Test email sending"""
+    try:
+        success = send_email(
+            'ianmabruk3@gmail.com',
+            'MTC LTD Email Test',
+            '<h1>Email system working!</h1><p>Your email configuration is successful.</p>'
+        )
+        if success:
+            return jsonify({'message': 'Test email sent successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to send test email'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
