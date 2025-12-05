@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-premium text-midnight font-sans;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .luxury-gradient {
+    @apply bg-gradient-to-br from-midnight via-midnight/90 to-electric/20;
+  }
+  
+  .gold-gradient {
+    @apply bg-gradient-to-r from-gold to-yellow-400;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-gold to-yellow-400 text-midnight font-semibold px-8 py-3 rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-gold text-gold font-semibold px-8 py-3 rounded-lg hover:bg-gold hover:text-midnight transition-all duration-300;
+  }
+  
+  .card-luxury {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105;
+  }
+  
+  .btn-outline {
+    @apply border border-white/20 text-white font-medium px-6 py-2 rounded-lg hover:bg-white/10 transition-all duration-300;
+  }
+}
