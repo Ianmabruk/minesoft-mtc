@@ -17,11 +17,11 @@ UPLOAD_FOLDER = 'uploads/cvs'
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Email configuration (use environment variables in production)
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-EMAIL_ADDRESS = "mtcltd.demo@gmail.com"  # Replace with your email
-EMAIL_PASSWORD = "your-app-password"     # Replace with your app password
+# Email configuration
+SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
+EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', 'ianmabruk3@gmail.com')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'your-app-password')
 
 # Ensure directories exist
 os.makedirs('db', exist_ok=True)
@@ -152,7 +152,7 @@ def generate_quote_email_html(client_name, quote_amount, project_details, paymen
             <div class="footer">
                 <div class="contact-info">
                     <strong>Contact Information</strong><br>
-                    Email: info@mtcltd.com | Phone: +1 (555) 123-4567<br>
+                    Email: ianmabruk3@gmail.com | Phone: +1 (555) 123-4567<br>
                     Address: 123 Enterprise Plaza, New York, NY 10001
                 </div>
                 <p style="margin: 20px 0 0 0; color: #DADEE4; font-size: 12px;">
@@ -401,11 +401,8 @@ def send_quote_email():
         print(f"Subject: {data['subject']}")
         print("Email content generated successfully")
         
-        # In production, uncomment this line:
-        # success = send_email(data['clientEmail'], data['subject'], html_content)
-        
-        # For demo, always return success
-        success = True
+        # Send actual email
+        success = send_email(data['clientEmail'], data['subject'], html_content)
         
         if success:
             return jsonify({'message': 'Quote email sent successfully'}), 200
