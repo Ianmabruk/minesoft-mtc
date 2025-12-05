@@ -20,10 +20,11 @@ const Careers = () => {
   }, [])
 
   const fetchJobs = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/jobs')
-      setJobs(response.data)
-    } catch (error) {
+    // Load from localStorage or use demo data
+    const storedJobs = localStorage.getItem('mtc_jobs')
+    if (storedJobs) {
+      setJobs(JSON.parse(storedJobs))
+    } else {
       // Demo data if API fails
       setJobs([
         {
@@ -95,10 +96,11 @@ const Careers = () => {
   }
 
   const fetchProjects = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/projects')
-      setProjects(response.data)
-    } catch (error) {
+    // Load from localStorage or use demo data
+    const storedProjects = localStorage.getItem('mtc_projects')
+    if (storedProjects) {
+      setProjects(JSON.parse(storedProjects))
+    } else {
       // Demo data if API fails
       setProjects([
         {
@@ -149,18 +151,24 @@ const Careers = () => {
     
     formData.append('jobId', selectedJob.id)
     
-    try {
-      await axios.post('http://localhost:5000/api/apply', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-      toast.success('Application submitted successfully!')
-      reset()
-      setShowApplication(false)
-    } catch (error) {
-      toast.success('Application submitted successfully! (Demo mode)')
-      reset()
-      setShowApplication(false)
-    } finally {
+    // Save application to localStorage
+    const applications = JSON.parse(localStorage.getItem('mtc_applications') || '[]')
+    const newApplication = {
+      id: Date.now().toString(),
+      jobId: selectedJob.id,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      coverLetter: data.coverLetter,
+      created_at: new Date().toISOString()
+    }
+    applications.push(newApplication)
+    localStorage.setItem('mtc_applications', JSON.stringify(applications))
+    
+    toast.success('Application submitted successfully!')
+    reset()
+    setShowApplication(false) finally {
       setLoading(false)
     }
   }

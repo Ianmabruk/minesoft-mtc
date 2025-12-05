@@ -49,7 +49,10 @@ const Quote = () => {
     try {
       const selectedServices = services.filter(service => data[service.id]).map(s => s.name)
       
-      await axios.post('http://localhost:5000/api/quote', {
+      // Save to localStorage
+      const quotes = JSON.parse(localStorage.getItem('mtc_quotes') || '[]')
+      const newQuote = {
+        id: Date.now().toString(),
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
@@ -64,8 +67,10 @@ const Quote = () => {
         projectSize: data.projectSize,
         estimatedCost,
         additionalInfo: data.additionalInfo,
-        timestamp: new Date().toISOString()
-      })
+        created_at: new Date().toISOString()
+      }
+      quotes.push(newQuote)
+      localStorage.setItem('mtc_quotes', JSON.stringify(quotes))
       
       toast.success('Quote request submitted! We\'ll contact you within 24 hours.')
       reset()

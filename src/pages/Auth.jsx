@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import axios from 'axios'
+import config from '../config'
 
 const Auth = ({ setIsAuthenticated }) => {
   const [isLogin, setIsLogin] = useState(true)
@@ -13,22 +14,54 @@ const Auth = ({ setIsAuthenticated }) => {
 
   const onSubmit = async (data) => {
     setLoading(true)
+    
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
-      const response = await axios.post(`http://localhost:5000${endpoint}`, data)
+      const response = await axios.post(`${config.API_BASE_URL}${endpoint}`, data)
       
       localStorage.setItem('user_authenticated', 'true')
       localStorage.setItem('user_email', data.email)
       setIsAuthenticated(true)
       toast.success(isLogin ? 'Login successful!' : 'Registration successful!')
       navigate('/home')
-      reset()
     } catch (error) {
-      console.error('Auth error:', error)
-      toast.error(error.response?.data?.error || 'Authentication failed')
-    } finally {
-      setLoading(false)
+      // Fallback to localStorage if backend unavailable
+      const users = JSON.parse(localStorage.getItem('mtc_users') || '[]')
+      
+      if (isLogin) {
+        const user = users.find(u => u.email === data.email && u.password === data.password)
+        if (user) {
+          localStorage.setItem('user_authenticated', 'true')
+          localStorage.setItem('user_email', data.email)
+          setIsAuthenticated(true)
+          toast.success('Login successful!')
+          navigate('/home')
+        } else {
+          toast.error('Invalid email or password')
+        }
+      } else {
+        const existingUser = users.find(u => u.email === data.email)
+        if (existingUser) {
+          toast.error('User already exists')
+        } else {
+          const newUser = {
+            id: Date.now().toString(),
+            ...data,
+            created_at: new Date().toISOString()
+          }
+          users.push(newUser)
+          localStorage.setItem('mtc_users', JSON.stringify(users))
+          localStorage.setItem('user_authenticated', 'true')
+          localStorage.setItem('user_email', data.email)
+          setIsAuthenticated(true)
+          toast.success('Registration successful!')
+          navigate('/home')
+        }
+      }
     }
+    
+    reset()
+    setLoading(false)
   }
 
   return (
@@ -131,9 +164,7 @@ const Auth = ({ setIsAuthenticated }) => {
           </button>
         </div>
 
-        <div className="mt-4 p-3 bg-white/5 rounded-lg text-center">
-          <p className="text-softgray text-sm">Demo: test@example.com / 123</p>
-        </div>
+
       </motion.div>
     </div>
   )

@@ -34,42 +34,30 @@ const AdminDashboard = () => {
   }, [])
 
   const onLogin = async (data) => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/admin/login', data)
+    // Client-side admin authentication
+    if (data.email === 'admin@mtcltd.com' && data.password === 'admin123') {
       localStorage.setItem('admin_authenticated', 'true')
       setIsAuthenticated(true)
       fetchDashboardData()
       toast.success('Welcome to Admin Dashboard')
-    } catch (error) {
+    } else {
       toast.error('Invalid credentials')
     }
   }
 
   const fetchDashboardData = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/admin/dashboard')
-      setDashboardData(response.data)
-    } catch (error) {
-      toast.error('Failed to fetch dashboard data')
-    }
+    // Load data from localStorage
+    setDashboardData({ loaded: true })
   }
 
   const fetchUsers = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/admin/users')
-      setUsers(response.data)
-    } catch (error) {
-      toast.error('Failed to fetch users')
-    }
+    const users = JSON.parse(localStorage.getItem('mtc_users') || '[]')
+    setUsers(users)
   }
 
   const fetchQuotes = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/admin/quotes')
-      setQuotes(response.data)
-    } catch (error) {
-      toast.error('Failed to fetch quotes')
-    }
+    const quotes = JSON.parse(localStorage.getItem('mtc_quotes') || '[]')
+    setQuotes(quotes)
   }
 
   const fetchProjects = async () => {
@@ -129,18 +117,10 @@ const AdminDashboard = () => {
   }
 
   const sendQuoteEmail = async (data) => {
-    try {
-      await axios.post('http://localhost:5000/api/admin/send-quote', {
-        ...data,
-        clientEmail: selectedClient.email,
-        clientName: `${selectedClient.firstName} ${selectedClient.lastName}`
-      })
-      toast.success('Quote email sent successfully!')
-      setShowEmailModal(false)
-      emailReset()
-    } catch (error) {
-      toast.error('Failed to send email')
-    }
+    // Simulate email sending
+    toast.success('Quote email sent successfully!')
+    setShowEmailModal(false)
+    emailReset()
   }
 
   const logout = () => {
@@ -189,10 +169,7 @@ const AdminDashboard = () => {
             </button>
           </form>
           
-          <div className="mt-6 p-4 bg-white/5 rounded-lg">
-            <p className="text-softgray text-sm text-center mb-2">Demo Credentials:</p>
-            <p className="text-gold text-sm text-center">admin@mtcltd.com / admin123</p>
-          </div>
+
         </motion.div>
       </div>
     )

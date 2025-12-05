@@ -646,11 +646,8 @@ def submit_application():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
+    import os
+    port = int(os.environ.get('PORT', 5000))
     print("🚀 Starting MTC LTD Backend Server...")
-    print("📊 Admin Dashboard: http://localhost:3000/admin")
-    print("👤 Client Dashboard: http://localhost:3000/dashboard")
-    print("💼 Careers Page: http://localhost:3000/careers")
-    print("🔐 Admin credentials: admin@mtcltd.com / admin123")
-    print("👤 Demo user: test@example.com / 123")
-    print("🌐 Server running on http://localhost:5000")
-    app.run(debug=True, port=5000)
+    print(f"🌐 Server running on port {port}")
+    app.run(host='0.0.0.0', port=port, debug=False)
