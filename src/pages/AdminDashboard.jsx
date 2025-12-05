@@ -8,6 +8,7 @@ import {
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import axios from 'axios'
+import config from '../config'
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -131,8 +132,28 @@ const AdminDashboard = () => {
   }
 
   const sendQuoteEmail = async (data) => {
-    // Simulate email sending
-    toast.success('Quote email sent successfully!')
+    try {
+      // Try to send via backend if available
+      await axios.post(`${config.API_BASE_URL || 'http://localhost:5000'}/api/admin/send-quote`, {
+        ...data,
+        clientEmail: selectedClient.email,
+        clientName: `${selectedClient.firstName} ${selectedClient.lastName}`
+      })
+      toast.success('Quote email sent successfully!')
+    } catch (error) {
+      // Fallback: Save to localStorage for manual follow-up
+      const emailQueue = JSON.parse(localStorage.getItem('email_queue') || '[]')
+      emailQueue.push({
+        id: Date.now().toString(),
+        to: selectedClient.email,
+        subject: data.subject,
+        content: data,
+        created_at: new Date().toISOString(),
+        status: 'pending'
+      })
+      localStorage.setItem('email_queue', JSON.stringify(emailQueue))
+      toast.success('Quote saved! Email will be sent when backend is available.')
+    }
     setShowEmailModal(false)
     emailReset()
   }
