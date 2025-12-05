@@ -168,9 +168,8 @@ const Careers = () => {
     
     toast.success('Application submitted successfully!')
     reset()
-    setShowApplication(false) finally {
-      setLoading(false)
-    }
+    setShowApplication(false)
+    setLoading(false)
   }
 
   const downloadCV = () => {
